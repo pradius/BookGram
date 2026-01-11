@@ -10,8 +10,8 @@ from alembic import context
 
 # Import models to ensure they're registered
 from app.core.config import settings
+from app.db.models import *  # noqa: F403
 from app.db.session import Base
-from app.models import *  # noqa: F403
 
 # this is the Alembic Config object
 config = context.config

@@ -2,8 +2,8 @@
 
 from fastapi import APIRouter
 
-from app.api.v1 import books
+from app.api.v1 import files
 
 router = APIRouter()
 
-router.include_router(books.router)
+router.include_router(files.router)
