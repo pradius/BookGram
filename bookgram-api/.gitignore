@@ -47,6 +47,10 @@ htmlcov/
 *.db
 *.sqlite3
 
+# Uploads (user-generated content)
+uploads/*
+!uploads/.gitkeep
+
 # Logs
 *.log
 
