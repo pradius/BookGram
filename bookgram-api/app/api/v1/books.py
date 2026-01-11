@@ -21,13 +21,13 @@ async def list_books(
 ) -> BookListResponse:
     """
     List all books with pagination.
-    
+
     - **page**: Page number (starts at 1)
     - **size**: Number of items per page (max 100)
     """
     skip = (page - 1) * size
     books, total = await BookService.get_books(db, skip=skip, limit=size)
-    
+
     return BookListResponse(
         items=[BookResponse.model_validate(book) for book in books],
         total=total,
@@ -44,7 +44,7 @@ async def get_book(
 ) -> BookResponse:
     """
     Get a specific book by ID.
-    
+
     - **book_id**: Book ID
     """
     book = await BookService.get_book(db, book_id)
@@ -63,7 +63,7 @@ async def create_book(
 ) -> BookResponse:
     """
     Create a new book.
-    
+
     - **title**: Book title (required)
     - **author**: Book author (required)
     - **isbn**: ISBN number (optional)
@@ -82,7 +82,7 @@ async def update_book(
 ) -> BookResponse:
     """
     Update an existing book.
-    
+
     - **book_id**: Book ID
     - Fields to update (all optional)
     """
@@ -102,7 +102,7 @@ async def delete_book(
 ) -> None:
     """
     Delete a book.
-    
+
     - **book_id**: Book ID
     """
     deleted = await BookService.delete_book(db, book_id)

@@ -17,9 +17,9 @@ async def test_create_book(client: AsyncClient) -> None:
         "description": "A classic American novel",
         "published_year": 1925,
     }
-    
+
     response = await client.post("/api/v1/books", json=book_data)
-    
+
     assert response.status_code == 201
     data = response.json()
     assert data["title"] == book_data["title"]
@@ -34,7 +34,7 @@ async def test_create_book(client: AsyncClient) -> None:
 async def test_list_books_empty(client: AsyncClient) -> None:
     """Test listing books when database is empty."""
     response = await client.get("/api/v1/books")
-    
+
     assert response.status_code == 200
     data = response.json()
     assert data["total"] == 0
@@ -62,9 +62,9 @@ async def test_list_books_with_data(
     )
     test_db_session.add_all([book1, book2])
     await test_db_session.commit()
-    
+
     response = await client.get("/api/v1/books")
-    
+
     assert response.status_code == 200
     data = response.json()
     assert data["total"] == 2
@@ -88,9 +88,9 @@ async def test_get_book(
     test_db_session.add(book)
     await test_db_session.commit()
     await test_db_session.refresh(book)
-    
+
     response = await client.get(f"/api/v1/books/{book.id}")
-    
+
     assert response.status_code == 200
     data = response.json()
     assert data["id"] == book.id
@@ -102,7 +102,7 @@ async def test_get_book(
 async def test_get_book_not_found(client: AsyncClient) -> None:
     """Test getting a non-existent book."""
     response = await client.get("/api/v1/books/99999")
-    
+
     assert response.status_code == 404
     assert "not found" in response.json()["detail"].lower()
 
@@ -121,10 +121,10 @@ async def test_update_book(
     test_db_session.add(book)
     await test_db_session.commit()
     await test_db_session.refresh(book)
-    
+
     update_data = {"title": "Updated Title"}
     response = await client.patch(f"/api/v1/books/{book.id}", json=update_data)
-    
+
     assert response.status_code == 200
     data = response.json()
     assert data["title"] == "Updated Title"
@@ -136,7 +136,7 @@ async def test_update_book_not_found(client: AsyncClient) -> None:
     """Test updating a non-existent book."""
     update_data = {"title": "Updated Title"}
     response = await client.patch("/api/v1/books/99999", json=update_data)
-    
+
     assert response.status_code == 404
 
 
@@ -155,11 +155,11 @@ async def test_delete_book(
     await test_db_session.commit()
     await test_db_session.refresh(book)
     book_id = book.id
-    
+
     response = await client.delete(f"/api/v1/books/{book_id}")
-    
+
     assert response.status_code == 204
-    
+
     # Verify book is deleted
     get_response = await client.get(f"/api/v1/books/{book_id}")
     assert get_response.status_code == 404
@@ -169,7 +169,7 @@ async def test_delete_book(
 async def test_delete_book_not_found(client: AsyncClient) -> None:
     """Test deleting a non-existent book."""
     response = await client.delete("/api/v1/books/99999")
-    
+
     assert response.status_code == 404
 
 
@@ -181,12 +181,11 @@ async def test_list_books_pagination(
     """Test books list pagination."""
     # Create 15 test books
     books = [
-        Book(title=f"Book {i}", author=f"Author {i}", isbn=f"123456789012{i}")
-        for i in range(15)
+        Book(title=f"Book {i}", author=f"Author {i}", isbn=f"123456789012{i}") for i in range(15)
     ]
     test_db_session.add_all(books)
     await test_db_session.commit()
-    
+
     # Test first page
     response = await client.get("/api/v1/books?page=1&size=10")
     assert response.status_code == 200
@@ -195,7 +194,7 @@ async def test_list_books_pagination(
     assert len(data["items"]) == 10
     assert data["page"] == 1
     assert data["pages"] == 2
-    
+
     # Test second page
     response = await client.get("/api/v1/books?page=2&size=10")
     assert response.status_code == 200

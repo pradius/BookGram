@@ -17,7 +17,7 @@ async def health_check(
 ) -> dict[str, str]:
     """
     Health check endpoint.
-    
+
     Verifies API and database connectivity.
     """
     try:

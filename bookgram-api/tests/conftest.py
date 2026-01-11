@@ -12,7 +12,6 @@ from app.core.config import settings
 from app.db.session import Base, get_db
 from app.main import app
 
-
 # Test database URL
 TEST_DATABASE_URL = settings.test_database_url_str or settings.database_url_str.replace(
     "/bookgram", "/bookgram_test"

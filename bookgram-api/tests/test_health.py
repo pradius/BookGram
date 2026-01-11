@@ -8,7 +8,7 @@ from httpx import AsyncClient
 async def test_health_check(client: AsyncClient) -> None:
     """Test health check endpoint returns healthy status."""
     response = await client.get("/health")
-    
+
     assert response.status_code == 200
     data = response.json()
     assert "status" in data
