@@ -8,7 +8,6 @@ dependencies = [
     "fastapi>=0.115.0",
     "uvicorn[standard]>=0.32.0",
     "sqlalchemy>=2.0.35",
-    "sqlmodel>=0.0.22",
     "asyncpg>=0.29.0",
     "alembic>=1.13.3",
     "pydantic>=2.9.0",
@@ -34,15 +33,6 @@ build-backend = "hatchling.build"
 
 [tool.hatch.build.targets.wheel]
 packages = ["app"]
-
-[dependency-groups]
-dev = [
-    "pytest>=8.3.3",
-    "pytest-asyncio>=0.24.0",
-    "pytest-cov>=6.0.0",
-    "ruff>=0.7.0",
-    "pyright>=1.1.389",
-]
 
 [tool.ruff]
 line-length = 100
