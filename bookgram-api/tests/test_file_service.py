@@ -14,10 +14,10 @@ class TestFileService:
     def test_normalize_topic(self):
         """Test topic normalization."""
         assert FileService.normalize_topic("Hello World") == "hello_world"
-        assert FileService.normalize_topic("Python 3.12!") == "python_312"
+        assert FileService.normalize_topic("Python 3.12!") == "python_3.12"
         assert FileService.normalize_topic("Test-Title") == "test_title"
         assert FileService.normalize_topic("  Spaces  ") == "spaces"
-        assert FileService.normalize_topic("Special@#$Chars") == "specialchars"
+        assert FileService.normalize_topic("Special@#$Chars") == "special_chars"
 
     def test_get_file_extension(self):
         """Test file extension extraction."""
@@ -54,7 +54,7 @@ class TestFileService:
         mock_db = AsyncMock()
         mock_db.add = MagicMock()
         mock_db.flush = AsyncMock()
-        
+
         file_record = await FileService.create_file_record(
             db=mock_db,
             location_url="uploads/test.txt",
@@ -81,7 +81,7 @@ class TestFileService:
             size=2048,
             format="txt",
         )
-        
+
         mock_result = MagicMock()
         mock_result.scalar_one_or_none.return_value = mock_file
         mock_db.execute.return_value = mock_result
@@ -103,7 +103,7 @@ class TestFileService:
         mock_result = MagicMock()
         mock_result.scalar_one_or_none.return_value = None
         mock_db.execute.return_value = mock_result
-        
+
         file_record = await FileService.get_file_by_topic(
             db=mock_db, topic="nonexistent"
         )

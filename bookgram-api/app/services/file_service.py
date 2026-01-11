@@ -27,9 +27,10 @@ class FileService:
         Returns:
             Normalized topic string (lowercase, alphanumeric with underscores)
         """
-        # Remove special characters and replace spaces with underscores
-        normalized = re.sub(r"[^\w\s-]", "", title.lower())
-        normalized = re.sub(r"[-\s]+", "_", normalized)
+        # Convert to lowercase and replace special characters (except dots) with underscores
+        normalized = re.sub(r"[^\w\s.\-]", "_", title.lower())
+        # Replace multiple spaces, hyphens, and underscores with single underscore
+        normalized = re.sub(r"[-\s_]+", "_", normalized)
         return normalized.strip("_")
 
     @staticmethod

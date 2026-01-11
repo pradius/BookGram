@@ -1,0 +1,55 @@
+Prompt for BookGram Python API:
+
+
+Create a Prompt for Copilot Agent to create the skeleton app for a FastAPI api:
+
+It Uses:
+Fastapi
+Python >= 3.9
+Uv for dependency management
+Ty and Ruff for linting and typecheck
+A connection to a Postgres DB
+Deploy locally for testing but deploy in containers for production: Podman
+Uses latest and Best FastAPI + Python Best Practices
+Add Readmes and documentation 
+Also include tests with Pytest
+
+
+
+Geminis Meta prompt:
+
+Act as a Senior Python Platform Engineer. Generate a production-ready skeleton for a FastAPI application named "BookGram".
+
+### Tech Stack Constraints:
+- Language: Python >= 3.9
+- Framework: FastAPI (using latest best practices: APIRouter, lifespan events, Annotated dependencies)
+- Dependency Management: `uv` (include a pyproject.toml with `[tool.uv]` and `uv.lock` logic)
+- Linting & Types: Ruff (for linting/formatting) and Pyright/Mypy (integrated via Ruff/standalone)
+- Database: PostgreSQL (using SQLAlchemy 2.0 async engine or SQLModel)
+- Containerization: Podman (provide a Containerfile and compose.yaml)
+- Testing: Pytest with httpx (AsyncClient)
+
+### Project Structure:
+/bookgram
+├── app/
+│   ├── api/          # Route handlers (v1/endpoints)
+│   ├── core/         # Config (pydantic-settings), security
+│   ├── db/           # Session, base models, migrations (Alembic)
+│   ├── models/       # DB Entities
+│   ├── schemas/      # Pydantic models
+│   ├── services/     # Business logic
+│   └── main.py       # App entry point
+├── tests/            # Pytest suite with conftest.py (using a test DB)
+├── pyproject.toml    # Configured for uv, ruff, and pytest
+├── Containerfile     # Optimized for Podman (multi-stage build)
+├── compose.yaml      # Podman-compose for App + Postgres
+└── README.md         # Setup instructions
+
+### Specific Requirements:
+1. Implement a '/health' check and a basic 'books' CRUD module.
+2. Use 'uv sync' logic in the Containerfile and ensure it runs as a non-root user.
+3. Use Pydantic V2 for all schemas and settings.
+4. In README.md, explain how to run locally using 'uv run' and in production using 'podman-compose'.
+5. Include a conftest.py that handles an async database session for tests.
+
+Generate the code for all primary configuration files and the main application skeleton.

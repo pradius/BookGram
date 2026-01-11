@@ -68,6 +68,13 @@ async def save_file(
     # Get file extension
     file_format = FileService.get_file_extension(file.filename)
 
+    # Validate file has an extension
+    if not file_format:
+        raise HTTPException(
+            status_code=status.HTTP_400_BAD_REQUEST,
+            detail="File must have a valid extension",
+        )
+
     # Validate file format (text formats only)
     allowed_formats = ["txt", "md", "log", "pdf", "epub"]
     if file_format not in allowed_formats:
