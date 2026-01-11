@@ -1,0 +1,47 @@
+services:
+  # PostgreSQL Database
+  db:
+    image: docker.io/postgres:16-alpine
+    container_name: bookgram-db
+    environment:
+      POSTGRES_USER: bookgram
+      POSTGRES_PASSWORD: bookgram
+      POSTGRES_DB: bookgram
+    volumes:
+      - postgres_data:/var/lib/postgresql/data
+    ports:
+      - "5432:5432"
+    healthcheck:
+      test: ["CMD-SHELL", "pg_isready -U bookgram"]
+      interval: 10s
+      timeout: 5s
+      retries: 5
+    networks:
+      - bookgram-network
+
+  # BookGram API
+  api:
+    build:
+      context: ..
+      dockerfile: deploy/Containerfile
+    container_name: bookgram-api
+    environment:
+      - DATABASE_URL=postgresql+asyncpg://bookgram:bookgram@db:5432/bookgram
+      - DEBUG=False
+      - ENVIRONMENT=production
+      - SECRET_KEY=change-this-to-a-secure-secret-key-in-production-min-32-chars
+    ports:
+      - "8000:8000"
+    depends_on:
+      db:
+        condition: service_healthy
+    networks:
+      - bookgram-network
+    restart: unless-stopped
+
+volumes:
+  postgres_data:
+
+networks:
+  bookgram-network:
+    driver: bridge
