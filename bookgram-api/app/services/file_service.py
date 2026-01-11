@@ -1,5 +1,7 @@
 """File service for handling file operations."""
 
+from __future__ import annotations
+
 import re
 from pathlib import Path
 

@@ -14,10 +14,10 @@ router = APIRouter(prefix="/files", tags=["files"])
 
 @router.post("/save", response_model=str, status_code=status.HTTP_201_CREATED)
 async def save_file(
+    db: Annotated[AsyncSession, Depends(get_db)],
     file: UploadFile = File(..., description="Text file to upload (supports compressed/chunks)"),
     title: str = Form(..., description="Title for the file (will be normalized as topic)"),
     user_id: int = Form(..., description="User ID for subscription"),
-    db: Annotated[AsyncSession, Depends(get_db)] = None,
 ) -> str:
     """
     Save a file and subscribe user to the topic.

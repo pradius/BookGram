@@ -1,5 +1,7 @@
 """Application configuration using Pydantic Settings V2."""
 
+from __future__ import annotations
+
 from typing import Annotated
 
 from pydantic import BeforeValidator, Field, PostgresDsn
@@ -10,7 +12,7 @@ def parse_cors(url: str | list[str]) -> list[str] | str:
     """Parse CORS origins from string or list."""
     if isinstance(url, str) and not url.startswith("["):
         return [i.strip() for i in url.split(",")]
-    elif isinstance(url, list | str):
+    elif isinstance(url, (list, str)):
         return url
     raise ValueError(url)
 
@@ -27,8 +29,8 @@ class Settings(BaseSettings):
     # Application
     APP_NAME: str = "BookGram"
     APP_VERSION: str = "0.1.0"
-    DEBUG: bool = False
-    ENVIRONMENT: str = "production"
+    DEBUG: bool = True
+    ENVIRONMENT: str = "development"
 
     # API
     API_V1_PREFIX: str = "/api/v1"
@@ -41,7 +43,9 @@ class Settings(BaseSettings):
     TEST_DATABASE_URL: PostgresDsn | None = None
 
     # Security
-    SECRET_KEY: str = Field(min_length=32)
+    SECRET_KEY: str = Field(
+        default="dev-secret-key-change-in-production-min-32-chars-long", min_length=32
+    )
     ACCESS_TOKEN_EXPIRE_MINUTES: int = 30
 
     @property

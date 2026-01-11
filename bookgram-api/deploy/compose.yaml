@@ -23,13 +23,13 @@ services:
   api:
     build:
       context: ..
-      dockerfile: deploy/Containerfile
+      dockerfile: deploy/Dockerfile
     container_name: bookgram-api
     environment:
       - DATABASE_URL=postgresql+asyncpg://bookgram:bookgram@db:5432/bookgram
-      - DEBUG=False
-      - ENVIRONMENT=production
-      - SECRET_KEY=change-this-to-a-secure-secret-key-in-production-min-32-chars
+      - DEBUG=True
+      - ENVIRONMENT=development
+      - SECRET_KEY=dev-secret-key-change-in-production-min-32-chars-long
     ports:
       - "8000:8000"
     depends_on:

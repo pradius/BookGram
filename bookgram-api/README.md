@@ -10,7 +10,7 @@ A production-ready FastAPI application for managing short books summary videos, 
 - **Linting & Formatting**: Ruff (replaces Black, isort, flake8)
 - **Type Checking**: Pyright (integrated with Ruff)
 - **Testing**: Pytest with httpx AsyncClient
-- **Containerization**: Podman (Containerfile + compose.yaml)
+- **Containerization**: Docker (Dockerfile + compose.yaml)
 - **Migrations**: Alembic for database schema management
 
 ## 📁 Project Structure
@@ -20,27 +20,28 @@ bookgram-api/
 ├── app/
 │   ├── api/              # API route handlers
 │   │   ├── v1/          # API v1 endpoints
-│   │   │   └── books.py # Books CRUD endpoints
+│   │   │   └── files.py # SaveFile endpoint
 │   │   └── health.py    # Health check endpoint
 │   ├── core/            # Core configuration
 │   │   └── config.py    # Pydantic Settings
 │   ├── db/              # Database setup
+│   │   ├── models/      # SQLAlchemy models
+│   │   │   ├── file.py  # File entity
+│   │   │   └── user.py  # User entity
+│   │   ├── schemas/     # Pydantic schemas
+│   │   │   └── file.py  # File schemas
 │   │   └── session.py   # Async session management
-│   ├── models/          # SQLAlchemy models
-│   │   └── book.py      # Book entity
-│   ├── schemas/         # Pydantic schemas
-│   │   └── book.py      # Book request/response models
 │   ├── services/        # Business logic layer
-│   │   └── book.py      # Book service
+│   │   ├── file_service.py  # File service
+│   │   └── user_service.py  # User service
 │   └── main.py          # Application entry point
 ├── tests/               # Test suite
 │   ├── conftest.py      # Pytest fixtures
-│   ├── test_health.py   # Health check tests
-│   └── test_books.py    # Books CRUD tests
+│   └── test_health.py   # Health check tests
 ├── alembic/             # Database migrations
 │   └── versions/        # Migration scripts
 ├── deploy/              # Deployment & containerization
-│   ├── Containerfile    # Podman/Docker image definition
+│   ├── Dockerfile       # Docker image definition
 │   └── compose.yaml     # Multi-container setup
 ├── pyproject.toml       # Project dependencies & config
 └── README.md            # This file
@@ -52,7 +53,7 @@ bookgram-api/
 
 - Python >= 3.9
 - [uv](https://github.com/astral-sh/uv) (recommended) or pip
-- PostgreSQL (or use Podman for containerized setup)
+- PostgreSQL (or use Docker for containerized setup)
 
 ### Local Development Setup
 
@@ -79,8 +80,8 @@ bookgram-api/
 
 5. **Start PostgreSQL** (if running locally)
    ```bash
-   # Using Podman
-   podman run -d \
+   # Using Docker
+   docker run -d \
      --name bookgram-db \
      -e POSTGRES_USER=bookgram \
      -e POSTGRES_PASSWORD=bookgram \
@@ -103,36 +104,36 @@ bookgram-api/
    
    Interactive API docs: `http://localhost:8000/docs`
 
-## 🐳 Production Deployment with Podman
+## 🐳 Production Deployment with Docker
 
-### Using Podman Compose (Recommended)
+### Using Docker Compose (Recommended)
 
 This method starts both the API and PostgreSQL database:
 
 ```bash
 # Build and start all services (from project root)
-podman-compose -f deploy/compose.yaml up -d
+docker compose -f bookgram-api/deploy/compose.yaml up -d
 
 # View logs
-podman-compose -f deploy/compose.yaml logs -f
+docker compose -f bookgram-api/deploy/compose.yaml logs -f
 
 # Stop services
-podman-compose -f deploy/compose.yaml down
+docker compose -f bookgram-api/deploy/compose.yaml down
 
 # Stop and remove volumes (data will be lost)
-podman-compose -f deploy/compose.yaml down -v
+docker compose -f bookgram-api/deploy/compose.yaml down -v
 ```
 
 The API will be available at: `http://localhost:8000`
 
-### Manual Podman Build
+### Manual Docker Build
 
 ```bash
-# Build the image
-podman build -t bookgram-api:latest -f deploy/Containerfile .
+# Build the image (from bookgram-api directory)
+docker build -t bookgram-api:latest -f deploy/Dockerfile .
 
 # Run the container (ensure PostgreSQL is running)
-podman run -d \
+docker run -d \
   --name bookgram-api \
   -p 8000:8000 \
   -e DATABASE_URL=postgresql+asyncpg://bookgram:bookgram@db:5432/bookgram \
@@ -168,12 +169,13 @@ uv run pytest -vv
 ### Health Check
 - `GET /health` - Health check endpoint (verifies DB connectivity)
 
-### Books CRUD (API v1)
-- `GET /api/v1/books` - List all books (with pagination)
-- `GET /api/v1/books/{id}` - Get a specific book
-- `POST /api/v1/books` - Create a new book
-- `PATCH /api/v1/books/{id}` - Update a book
-- `DELETE /api/v1/books/{id}` - Delete a book
+### Files API (API v1)
+- `POST /api/v1/files/save` - Save a file and subscribe user to topic
+  - **Parameters**: 
+    - `file` (UploadFile): Text file to upload
+    - `title` (str): Title for the file (will be normalized as topic)
+    - `user_id` (int): User ID for subscription
+  - **Returns**: Topic string (normalized title)
 
 ## 🔧 Development Tools
 

@@ -16,16 +16,23 @@ async def lifespan(app: FastAPI) -> AsyncGenerator[None, None]:
     """
     Lifespan context manager for startup and shutdown events.
 
-    Creates database tables on startup.
+    Creates database tables on startup if database is available.
     """
-    # Startup: Create tables
-    async with engine.begin() as conn:
-        await conn.run_sync(Base.metadata.create_all)
+    # Startup: Create tables if database is available
+    try:
+        async with engine.begin() as conn:
+            await conn.run_sync(Base.metadata.create_all)
+    except Exception as e:
+        print(f"⚠️  Database not available: {e}")
+        print("🚀 App will start without database connection")
 
     yield
 
     # Shutdown: Close database connections
-    await engine.dispose()
+    try:
+        await engine.dispose()
+    except Exception:
+        pass
 
 
 def create_application() -> FastAPI:
